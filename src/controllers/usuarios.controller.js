@@ -17,14 +17,15 @@ export async function register(req, res) {
             )
         }
         
-        
-        const novoUsuario = await registerService(email, senha);
+        const novoUsuario = await registerService(nome, email, senha);
 
         return res.status(201).json(novoUsuario);
 
     } catch(err) {
         console.error(err);
-        return res.status(500).json({ error: "Internal server error" })
+        return res.status(err.status || 500).json({
+            error: err.message || 'Internal Server ERror'
+        })
     }
 
-}
+};
