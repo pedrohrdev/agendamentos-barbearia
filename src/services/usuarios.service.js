@@ -60,3 +60,49 @@ export async function registerService(nome, email, senha) {
     }
 
 }
+
+export async function loginService(email, senha) {
+
+    // Search user by email
+    const { data: user, error } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('email', email)
+        .maybeSingle();
+
+    if(error) {
+        throw new Error(error.message); 
+    }    
+
+    if(!user) {
+        const err = new Error('Invalid Email or Password');
+        err.status = 401;
+        throw err;
+    }
+
+    // Comparar senha
+    const senhaValida = await bcrypt.compare(senha, user.senha_hash);
+
+    if(!senhaValida) {
+        const err = new Error("Invalid Email or Password");
+        err.status = 401;
+        throw err;
+    }
+
+    // Gerar token
+    const token = jwt.sign(
+        {id: user.id, email: user.email},
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+    );
+
+    return {
+        user: {
+            id: user.id,
+            nome: user.nome,
+            email: user.email
+        },
+        token
+    }
+
+}

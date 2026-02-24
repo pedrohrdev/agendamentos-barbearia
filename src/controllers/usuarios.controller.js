@@ -1,4 +1,4 @@
-import { registerService } from '../services/usuarios.service.js';
+import { registerService, loginService } from '../services/usuarios.service.js';
 
 export async function register(req, res) {
 
@@ -29,3 +29,25 @@ export async function register(req, res) {
     }
 
 };
+
+export async function login(req, res) {
+    try {
+
+        const { email, senha } = req.body;
+
+        if(!email || !senha) {
+            return res.status(400).json({
+                error: "Email and password are required"
+            })
+        };
+
+        const resultado = await loginService(email, senha);
+
+        return res.status(200).json(resultado);
+        
+    } catch(err) {
+        return res.status(err.status || 500).json({
+            error: err.message || "Internal server error"
+        })
+    }
+}

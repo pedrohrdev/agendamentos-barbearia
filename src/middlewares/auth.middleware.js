@@ -1,19 +1,29 @@
-/* 
+import jwt from 'jsonwebtoken';
 
-    auth.middleware.js:
+export function authMiddleware(req, res, next) {
 
-        Pega Authorization header
+    // 1 - pegar header
+    const authHeader = req.headers.authorization;
 
-        Remove "Bearer "
+    // 2 - verificar se existe
+    if(!authHeader) {
+        return res.status(401).json({ error: 'Token not provided' })
+    }
+    // 3 - extrair token
+    const token = authHeader.split(' ')[1];
 
-        jwt.verify()
+    try {
 
-        req.user = payload
+        // 4 - verificar token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        next()
+        // 5 - salvar dados no request
+        req.user = decoded;
 
-    Se token inválido → 401
-
-    Sem try/catch bagunçado.
-
-*/
+        // 6 - liberar acesso
+        next();
+        
+    } catch(err) {
+        return res.status(401).json({ error: "Invalid or expired token" })
+    }
+}
