@@ -44,7 +44,12 @@ export async function registerService(nome, email, senha) {
 
     // gerar token
     const token = jwt.sign(
-        { id: newUser.id, email: newUser.email },
+        { 
+            id: newUser.id,
+            email: newUser.email,
+            role: newUser.role 
+        },
+            
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
     )
@@ -54,7 +59,7 @@ export async function registerService(nome, email, senha) {
         user: {
             id: newUser.id,
             nome: newUser.nome,
-            email: newUser.email
+            email: newUser.email,
         },
         token
     }
@@ -89,9 +94,19 @@ export async function loginService(email, senha) {
         throw err;
     }
 
+    if (!user.role) {
+    console.log("ROLE ESTÁ VAZIA:", user);
+    }
+    
+    console.log("ROLE ANTES DO TOKEN:", user.role);
+    
     // Gerar token
     const token = jwt.sign(
-        {id: user.id, email: user.email},
+        {
+            id: user.id,
+            email: user.email,
+            role: user.role
+        },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
     );
@@ -100,7 +115,8 @@ export async function loginService(email, senha) {
         user: {
             id: user.id,
             nome: user.nome,
-            email: user.email
+            email: user.email,
+            role: user.role
         },
         token
     }
