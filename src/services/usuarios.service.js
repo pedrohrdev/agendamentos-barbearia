@@ -122,3 +122,8 @@ export async function loginService(email, senha) {
     }
 
 }
+
+export async function listarServicosService(req, res) {
+
+    
+}

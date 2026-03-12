@@ -1,6 +1,7 @@
 import express from 'express';
 import { supabase } from './database/index.js';
 import usuariosRoutes from './routes/usuarios.routes.js'
+import servicosRoutes from './routes/servicos.routes.js'
 
 const app = express();
 app.use(express.json());
@@ -41,5 +42,6 @@ app.get('/health', async (req, res) => {
 });
 
 app.use('/usuarios', usuariosRoutes);
+app.use('/servicos', servicosRoutes);
 
 export default app;
